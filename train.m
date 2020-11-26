@@ -33,26 +33,59 @@ addpath GitHub/CS_FINAL/Computer-Vision/Data/training_nonfaces/
 
 
 
-infoFaces = dir('GitHub/CS_FINAL/Computer-Vision/Data/training_faces/');
-infoNonFaces = dir('GitHub/CS_FINAL/Computer-Vision/Data/training_nonfaces/');
+infoFaces = dir('GitHub/CS_FINAL/Computer-Vision/Data/training_faces/*.bmp');
+infoNonFaces = dir('GitHub/CS_FINAL/Computer-Vision/Data/training_nonfaces/*.jpg');
 
 face_vertical = 100;
 face_horizontal = 100;
 
+faces = zeros(face_vertical, face_horizontal, length(infoFaces));
+nonfaces = zeros(face_vertical, face_horizontal, length(infoNonFaces));
+
+face_vertical = 100;
+face_horizontal = 100;
+
+
+
+%faces = zeros(face_vertical, face_horizontal, length(infoFaces));
+%nonfaces = zeroes(face_vertical, face_horizontal, length(infoNonFaces));
+
+for i = 1:length(infoFaces)
+faces(:, :, i) = imread(infoFaces(i).name);
+end
+
+for i = 1:length(infoNonFaces) 
+myImg = imread(infoNonFaces(i).name);
+[myImgX, myImgY] = size(myImg);
+randnum_x = random_number(1, myImgX-100);
+randnum_y = random_number(1, myImgY-100);
+nonfaces(:, :, i) = myImg(randnum_x:randnum_x+99, randnum_y:randnum_y+99);
+end
+
 number = 1000;
 weak_classifiers = cell(1, number);
 for i = 1:number
-    weak_classifiers{i} = generate_classifier(face_vertical, face_horizontal);
+weak_classifiers{i} = generate_classifier(face_vertical, face_horizontal);
+end
+
+face_integrals = zeros(face_vertical, face_horizontal, length(infoFaces));
+for i = 1:size(infoFaces)
+face_integrals(:, :, i) = integral_image(faces(:, :, i));
+end
+
+nonface_integrals = zeros(face_vertical, face_horizontal, length(infoNonFaces));
+for i = 1:size(infoNonFaces)
+nonface_integrals(:, :, i) = integral_image(nonfaces(:, :, i));
 end
 
 
-example_number = size(infoFaces, 1) + size(infoNonFaces, 1);
+example_number = size(faces, 3) + size(nonfaces, 3);
 labels = zeros(example_number, 1);
-labels (1:size(infoFaces,1)) = 1;
-labels((size(infoFaces, 1)+1):example_number) = -1;
+labels (1:size(faces, 3)) = 1;
+labels((size(faces, 3)+1):example_number) = -1;
 examples = zeros(face_vertical, face_horizontal, example_number);
-examples (:, :, 1:size(infoFaces,1)) = face_integrals;
-examples(:, :, (size(infoFaces,1)+1):example_number) = nonface_integrals;
+examples (:, :, 1:size(faces, 3)) = face_integrals;
+examples(:, :, (size(faces, 3)+1):example_number) = nonface_integrals;
 
 classifier_number = numel(weak_classifiers);
 
@@ -69,81 +102,6 @@ end
 
 
 
+boosted_classifier = AdaBoost(responses, labels, 15);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-%%
-negative_histogram = read_double_image('negatives.bin');
-positive_histogram = read_double_image('positives.bin');
-
-
-photo = imread("obama8.JPG");
-imshow(photo);
-
-
-
-newPhoto = detect_skin(photo, positive_histogram, negative_histogram);
-
-figure(2);
-imshow(newPhoto > .90);
-
-%%
-
-info = dir('GitHub/CS_FINAL/Computer-Vision/Data/training_faces/');
-
-index = 749;
-
-title = info(index,1);
-
-title.name
-
-
-labels = zeros(1000);
-
-
-for x = (1:500) 
-    labels (1:500, 1) = 1; 
-    randomIndex= randi([1 3050]);
-    title = info(index,1);
-    fileName=title.name;
-    workingFace = imread(filename);
-    b = integral_image(workingFace);
-    
-    
-    % choosing a set of random weak classifiers
-
-    number = 1000;
-    weak_classifiers = cell(1, number);
-    for i = 1:number
-    weak_classifiers{i} = generate_classifier(face_vertical, face_horizontal);
-    end
-    
-    
-
-end
-
-
-
-
-%%
-for x = (500:100)
-    labels (1, 501:1000) = -1; 
-    randomIndex= rand;
-    responces(x) = picAtRandomIndexfromnonFaces;
-    % create lables for some training examples for nonfaces
-    % labels should be -1
-end
-
-
-result = AdaBoost (responces,labels,15);
+disp ("imdone");
