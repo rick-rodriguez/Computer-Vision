@@ -19,16 +19,13 @@ infoTestFaces=dir('GitHub/CS_FINAL/Computer-Vision/Data/test_face_photos/*.JPG')
 
 testingFacesName = zeros(length(infoTestFaces),1);
 
-name = infoTestFaces(5).name;
+name = infoTestFaces(3).name;
 
 image= imread(name);
 
-imshow (image); 
-
-tic; 
-
-result = boosted_detector(image, 1, boosted_classifier, ...
-                                weak_classifiers, [100, 100], 1); toc
+imshow (image) 
+[result, boxes] = boosted_detector_demo(image, 1, boosted_classifier,...
+    weak_classifiers, [31, 25], 2);
 
 
 disp ("imdone");

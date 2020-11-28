@@ -17,21 +17,14 @@ addpath GitHub/CS_FINAL/Computer-Vision/Data/training_faces/
 addpath GitHub/CS_FINAL/Computer-Vision/Data/training_nonfaces/
 
 
-% training add a boost needs to stop and round n, n is found by trial and
-% error
-% use rectangle filters as weight classifiers
-% make skin a weight classifier as well
-%%%% IMPORTANT: use 1 and -1 for labels to facilitate the adaboost
-%%%% algorihmim
-%This makes sence bc if guessed id and correct id are equal it will always 
-% be positive
-%load in the faces and nonfaces in same order
-% pass those on to the adaboost function for about 15 rounds
-% this is trial and fail number, he started with this (15)
-
-
-
-
+%Bootstrapping
+%1.(Initialization:) Choose some training examples. Not too few, not too many.
+%2.Train a detector.
+%3.Apply the detector to all training images.
+%4.Identify mistakes.
+%5.Add mistakes to training examples.
+%6.If needed, remove some examples to make room.
+%Go to step 2, unless performance has stopped improving.
 
 infoFaces = dir('GitHub/CS_FINAL/Computer-Vision/Data/training_faces/*.bmp');
 infoNonFaces = dir('GitHub/CS_FINAL/Computer-Vision/Data/training_nonfaces/*.jpg');
@@ -39,29 +32,31 @@ infoNonFaces = dir('GitHub/CS_FINAL/Computer-Vision/Data/training_nonfaces/*.jpg
 face_vertical = 100;
 face_horizontal = 100;
 
-faces = zeros(face_vertical, face_horizontal, length(infoFaces));
-nonfaces = zeros(face_vertical, face_horizontal, length(infoNonFaces));
+faces = zeros(face_vertical, face_horizontal, 500);
+nonfaces = zeros(face_vertical, face_horizontal, 100);
 
 face_vertical = 100;
 face_horizontal = 100;
 
 tic;
+%1.(Initialization:) Choose some training examples. Not too few, not too many.
 
-%faces = zeros(face_vertical, face_horizontal, length(infoFaces));
-%nonfaces = zeroes(face_vertical, face_horizontal, length(infoNonFaces));
-
-for i = 1:length(infoFaces)
-faces(:, :, i) = imread(infoFaces(i).name);
+for i = 1:500
+  rand = random_number(1, length(infoFaces));   
+  faces(:, :, i) = imread(infoFaces(rand).name);
 end
 
-for i = 1:length(infoNonFaces) 
-myImg = imread(infoNonFaces(i).name);
-[myImgX, myImgY] = size(myImg);
-randnum_x = random_number(1, myImgX-100);
-randnum_y = random_number(1, myImgY-100);
-nonfaces(:, :, i) = myImg(randnum_x:randnum_x+99, randnum_y:randnum_y+99);
+for i = 1:100
+    rand = random_number(1, length(infoNonFaces));  
+    myImg = imread(infoNonFaces(rand).name);
+    [myImgX, myImgY] = size(myImg);
+    randnum_x = random_number(1, myImgX-100);
+    randnum_y = random_number(1, myImgY-100);
+    nonfaces(:, :, i) = myImg(randnum_x:randnum_x+99, randnum_y:randnum_y+99);
 end
 
+%2.Train a detector.
+% loop back to here to retrain the detector
 number = 1000;
 weak_classifiers = cell(1, number);
 for i = 1:number
@@ -102,6 +97,10 @@ end
 
 
 boosted_classifier = AdaBoost(responses, labels, 15);
+
+% call the detector here to classify all the photos and find the mistakes
+% if a mistake was made add this back into the training set and re-train
+% do this x number of times until it is inefficienet/less accurate
 
 toc;
 disp ("imdone");
