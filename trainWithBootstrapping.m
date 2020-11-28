@@ -101,6 +101,7 @@ boosted_classifier = AdaBoost(responses, labels, 15);
 % call the detector here to classify all the photos and find the mistakes
 % if a mistake was made add this back into the training set and re-train
 % do this x number of times until it is inefficienet/less accurate
+% get rid of samples 
 
 toc;
 disp ("imdone");

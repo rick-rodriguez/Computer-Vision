@@ -30,9 +30,6 @@ addpath GitHub/CS_FINAL/Computer-Vision/Data/training_nonfaces/
 % this is trial and fail number, he started with this (15)
 
 
-
-
-
 infoFaces = dir('GitHub/CS_FINAL/Computer-Vision/Data/training_faces/*.bmp');
 infoNonFaces = dir('GitHub/CS_FINAL/Computer-Vision/Data/training_nonfaces/*.jpg');
 
