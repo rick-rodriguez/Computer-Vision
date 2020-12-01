@@ -2,38 +2,15 @@ restoredefaultpath;
 clear all;
 close all;
 
-addpath GitHub/Lectures/Code/00_common/00_utilities/
-addpath GitHub/Lectures/Code/00_common/00_utilities/spread_figures/
-addpath GitHub/Lectures/Code/00_common/00_images/
-addpath GitHub/Lectures/Code/00_common/00_detection/
-addpath GitHub/Lectures/Code/11_boosting/
-addpath GitHub/CS_FINAL/Computer-Vision/
-addpath GitHub/CS_FINAL/Computer-Vision/Code/
-addpath GitHub/CS_FINAL/Computer-Vision/Data/
-addpath GitHub/CS_FINAL/Computer-Vision/Data/test_cropped_faces/
-addpath GitHub/CS_FINAL/Computer-Vision/Data/test_face_photos/
-addpath GitHub/CS_FINAL/Computer-Vision/Data/test_nonfaces/
-addpath GitHub/CS_FINAL/Computer-Vision/Data/training_faces/
-addpath GitHub/CS_FINAL/Computer-Vision/Data/training_nonfaces/
+directories
 
-% training add a boost needs to stop and round n, n is found by trial and
-% error
-% use rectangle filters as weight classifiers
-% make skin a weight classifier as well
-%%%% IMPORTANT: use 1 and -1 for labels to facilitate the adaboost
-%%%% algorihmim
-%This makes sence bc if guessed id and correct id are equal it will always 
-% be positive
-%load in the faces and nonfaces in same order
-% pass those on to the adaboost function for about 15 rounds
-% this is trial and fail number, he started with this (15)
+addpath(code_directory);
+addpath(data_directory);
 
 tic;
 
-infoFaces = dir('GitHub/CS_FINAL/Computer-Vision/Data/training_faces/*.bmp');
-infoNonFaces = dir('GitHub/CS_FINAL/Computer-Vision/Data/training_nonfaces/*.JPG');
-
-disp ("Istart");
+infoFaces = dir('Data\training_faces\*.bmp');
+infoNonFaces = dir('Data\training_nonfaces\*.JPG');
 
 face_vertical = 100;
 face_horizontal = 100;
@@ -48,15 +25,17 @@ next_ID_faces = 501;
 next_ID_nonfaces = 101;
 
 for i = 1:length(infoFaces)
-TrainingFaces(:, :, i) = imread(infoFaces(i).name);
+    img = [data_directory, 'training_faces\', infoFaces(i).name];
+    TrainingFaces(:, :, i) = imread(img);
 end
 
 for i = 1:length(infoNonFaces) 
-myImg = imread(infoNonFaces(i).name);
-[myImgX, myImgY, myImgZ] = size(myImg);
-randnum_x = random_number(1, myImgX-100);
-randnum_y = random_number(1, myImgY-100);
-TrainingNonfaces(:, :, i) = myImg(randnum_x:randnum_x+99, randnum_y:randnum_y+99);
+    img = [data_directory, 'training_nonfaces\', infoNonFaces(i).name];
+    myImg = imread(img);
+    [myImgX, myImgY, myImgZ] = size(myImg);
+    randnum_x = random_number(1, myImgX-100);
+    randnum_y = random_number(1, myImgY-100);
+    TrainingNonfaces(:, :, i) = myImg(randnum_x:randnum_x+99, randnum_y:randnum_y+99);
 end
 
 
@@ -79,12 +58,12 @@ for x = start_here:training_example_number
 end
 
 for i = 1:500
-    img = ['GitHub/CS_FINAL/Computer-Vision/Data/training_faces/', infoFaces(i).name];
+    img = [data_directory, 'training_faces\', infoFaces(i).name];
     faces(:, :, i) = imread(img);
 end
 
 for i = 1:100
-    img = ['GitHub/CS_FINAL/Computer-Vision/Data/training_nonfaces/', infoNonFaces(i).name];
+    img = [data_directory, 'training_nonfaces\', infoNonFaces(i).name];
     img = imread(img);
     [myImgX, myImgY, myImgZ] = size(img);
     randnum_x = random_number(1, myImgX-100);
@@ -104,7 +83,7 @@ accuracy = 100;
 previous_accuracy = 0;
 improvement = accuracy - previous_accuracy;
 
-while (improvement > .05 || previous_accuracy == 100)   
+while (improvement > .03 || previous_accuracy == 100)   
 previous_accuracy = accuracy;
 face_integrals = zeros(face_vertical, face_horizontal, length(faces));
 for i = 1:size(faces)
@@ -155,10 +134,10 @@ threshold
 
 
 for i = 1:example_number
-    if abs(responses(index, i)) > abs(threshold)
+    if responses(index, i) > abs(threshold)
         predictedLabels(i,1) = -1;
     end
-    if abs(responses(index, i)) < abs(threshold)
+    if responses(index, i) < threshold)
         predictedLabels(i,1) = 1;
     end
 end
@@ -190,7 +169,7 @@ accuracy
 
 improvement = accuracy - previous_accuracy;
 
-if (improvement > .05 || previous_accuracy == 100)
+if (improvement > .03 || previous_accuracy == 100)
     boosted_classifier = AdaBoost(responses, labels, 15);
 end
 
@@ -205,4 +184,3 @@ end
 end
 
 toc;
-disp ("imdone");
