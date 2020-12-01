@@ -1,11 +1,14 @@
-infoTestFaces=dir('Data\test_face_photos\*.JPG');
+infoTestFaces=dir('GitHub/CS_FINAL/Computer-Vision/Data/test_face_photos/*.JPG');
 
-posHist = read_double_image('Data\positives.bin');
-negHist = read_double_image('Data\negatives.bin');
+posHist = read_double_image('GitHub/CS_FINAL/Computer-Vision/Data/positives.bin');
+negHist = read_double_image('GitHub/CS_FINAL/Computer-Vision/Data/negatives.bin');
 
 testingFacesName = zeros(length(infoTestFaces),1);
+predictedLabels = zeros(example_number, 1);
 
-name = ['Data\test_face_photos\', infoTestFaces(18).name];
+name = ['GitHub/CS_FINAL/Computer-Vision/Data/test_face_photos/', infoTestFaces(18).name];
+
+disp ("Istart");
 
 coloredImage = imread(name);
 
@@ -36,7 +39,7 @@ imshow(image,[]);
 boxes = boosted_detector(image, 1, boosted_classifier, ...
                                 weak_classifiers, [100, 100], 1);                        
                
-result = image;
+result = coloredImage;
 
 
 result_number = 1;
@@ -46,8 +49,43 @@ for number = 1:result_number
                              boxes(number, 3), boxes(number, 4));
 end                                          
 
+probablityOfFace = zeros(rows,cols);
+
+%for i = 1:length(infoNonFaces) 
+myImg = coloredImage;
+[myImgX, myImgY, myImgZ] = size(myImg);
+for x = 1:(rows-100)
+    for y = 1:(cols-100)
+%randnum_x = random_number(1, myImgX-100);
+ % randnum_y = random_number(1, myImgY-100);
+    window = myImg(x:x+99, y:y+99);
+%end
+    classification1 = cascade_classify(window, c1,weak_classifiers); 
+    if classification1 == 1
+       probablityOfFace(x,y) = 1;
+       classification2 = cascade_classify(window, c2,weak_classifiers); 
+       if classification2 == 1
+          classification3 = cascade_classify(window, c3,weak_classifiers);
+          if classification3 == 1
+            classification4 = cascade_classify(window, c4,weak_classifiers); 
+            if classification4 == 1
+                classification5 = cascade_classify(window, c5,weak_classifiers);
+                if classification5 == 1
+                    probablityOfFace(x,y) = 1;
+                end 
+            end
+          end 
+       end
+    end
+    end
+end
+
+ 
+
+
+
 
 figure(3);
 imshow(result,[]);
 
-disp ("imdone");
+disp ("imdonedone");
