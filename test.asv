@@ -5,7 +5,7 @@ negHist = read_double_image('Data\negatives.bin');
 
 testingFacesName = zeros(length(infoTestFaces),1);
 
-name = ['Data\test_face_photos\', infoTestFaces(18).name];
+name = infoTestFaces(18).name;
 
 coloredImage = imread(name);
 

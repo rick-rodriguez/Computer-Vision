@@ -45,7 +45,7 @@ for i = 1:length(infoNonFaces)
     nonfaces(:, :, i) = img(randnum_x:randnum_x+99, randnum_y:randnum_y+99);
 end
 
-classifier_count = 1000;
+classifier_count = 3;
 weak_classifiers = cell(1, classifier_count);
 for i = 1:classifier_count
     weak_classifiers{i} = generate_classifier(face_vertical, face_horizontal);
@@ -72,7 +72,7 @@ examples(:, :, (size(faces, 3)+1):example_number) = nonface_integrals;
 
 classifier_number = numel(weak_classifiers);
 
-responses = zeros(classifier_number, example_number);
+responses =  zeros(classifier_number, example_number);
 
 for example = 1:example_number
     integral = examples(:, :, example);
@@ -85,6 +85,7 @@ end
 
 
 boosted_classifier = AdaBoost(responses, labels, 15);
+boos
 
 toc;
 disp ("imdone");
