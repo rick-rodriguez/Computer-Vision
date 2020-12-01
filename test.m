@@ -42,6 +42,8 @@ boxes = boosted_detector(image, 1, boosted_classifier, ...
 result = coloredImage;
 
 
+%isItAFace
+
 result_number = 1;
 
 for number = 1:result_number
@@ -49,6 +51,7 @@ for number = 1:result_number
                              boxes(number, 3), boxes(number, 4));
 end                                          
 
+<<<<<<< Updated upstream
 probablityOfFace = zeros(rows,cols);
 
 %for i = 1:length(infoNonFaces) 
@@ -83,6 +86,9 @@ end
  
 
 
+=======
+%%% we need it to tell us if it is a face or not
+>>>>>>> Stashed changes
 
 
 figure(3);

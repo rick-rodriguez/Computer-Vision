@@ -81,7 +81,13 @@ examples(:, :, (size(faces, 3)+1):example_number) = nonface_integrals;
 
 classifier_number = numel(weak_classifiers);
 
+<<<<<<< Updated upstream
 responses = zeros(classifier_number, example_number);
+=======
+responses =  zeros(classifier_number, example_number);
+responsesFACE =  zeros(1, example_number);
+
+>>>>>>> Stashed changes
 
 for example = 1:example_number
     integral = examples(:, :, example);
@@ -93,8 +99,10 @@ for example = 1:example_number
 end
 
 
+
 boosted_classifier = AdaBoost(responses, labels, 15);
 
+<<<<<<< Updated upstream
 weights = ones(example_number, 1) / example_number;
 
 [index, error, threshold, alpha] = find_best_classifier(responses, labels, weights);
@@ -135,5 +143,15 @@ c4 = cascade(face_vertical, face_horizontal, infoFaces, infoNonFaces,...
             faces, nonfaces, 25);
 c5 = cascade(face_vertical, face_horizontal, infoFaces, infoNonFaces,...
             faces, nonfaces, 50);
+=======
+
+
+
+for example = 1:example_number
+    integral = examples(:, :, example);
+    responsesFACE(1, example) = eval_weak_classifier(classifier, integral);
+end
+
+>>>>>>> Stashed changes
 toc;
 disp ("imdone");
